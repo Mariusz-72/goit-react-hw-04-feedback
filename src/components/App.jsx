@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import FeedbackOptions from './FeedbackOptions/FeedbackOptions';
 import Statistics from './Statistics/Statistics';
 import Section from './Section/Section';
 import NotificationMessage from './Statistics/NotificationMessage';
 
+const initialState = {
+  good: 0,
+  neutral: 0,
+  bad: 0,
+};
+
+const feedbackReducer = (state, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return { ...state, [action.name]: state[action.name] + 1 };
+    default:
+      return state;
+  }
+};
+
 const App = () => {
-  const [feedback, setFeedback] = useState({
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  });
+  const [feedback, dispatch] = useReducer(feedbackReducer, initialState);
 
   const countTotalFeedback = () => {
     return feedback.good + feedback.neutral + feedback.bad;
@@ -21,10 +32,7 @@ const App = () => {
   };
 
   const incrementFeedback = name => {
-    setFeedback(prevFeedback => ({
-      ...prevFeedback,
-      [name]: prevFeedback[name] + 1,
-    }));
+    dispatch({ type: 'INCREMENT', name });
   };
 
   const total = countTotalFeedback();
